@@ -1,0 +1,26 @@
+{
+  "name": "eslint-plugin-react-hooks-configurable",
+  "version": "4.3.0",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "index.js",
+    "rules"
+  ],
+  "keywords": [
+    "eslint",
+    "eslint-plugin",
+    "eslintplugin",
+    "react"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "eslint-plugin-react-hooks": "~4.3.0"
+  },
+  "peerDependencies": {
+    "eslint": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0"
+  },
+  "engines": {
+    "node": ">=10"
+  }
+}
