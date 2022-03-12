@@ -25,7 +25,16 @@ module.exports = {
         enableDangerousAutofixThisMayCauseInfiniteLoops: false,
         properties: {
           additionalHooks: {
-            type: 'string',
+            oneOf: [
+              { type: 'string' },
+              {
+                type: 'object',
+                additionalProperties: {
+                  type: 'number'
+                },
+              },
+            ],
+          },
           },
           enableDangerousAutofixThisMayCauseInfiniteLoops: {
             type: 'boolean',
@@ -35,12 +44,13 @@ module.exports = {
     ],
   },
   create(context) {
-    // Parse the `additionalHooks` regex.
+    // Parse the `additionalHooks`.
     const additionalHooks =
       context.options &&
       context.options[0] &&
       context.options[0].additionalHooks
-        ? new RegExp(context.options[0].additionalHooks)
+        ? parseAdditionalHooks(context.options[0].additionalHooks)
+        : undefined;
         : undefined;
 
     const enableDangerousAutofixThisMayCauseInfiniteLoops =
@@ -1720,11 +1730,31 @@ function getReactiveHookCallbackIndex(calleeNode, options) {
             throw error;
           }
         }
-        return options.additionalHooks.test(name) ? 0 : -1;
+        return options.additionalHooks(name);
       } else {
         return -1;
       }
   }
+}
+
+function parseAdditionalHooks(optionValue) {
+  if (typeof optionValue === 'string') {
+    const regexp = new RegExp(optionValue);
+    return (name) => regexp.test(name) ? 0 : -1;
+  }
+
+  if (typeof optionValue === 'object') {
+    const regexps = Object.entries(optionValue).map(
+      ([pattern, callbackIndex]) => [new RegExp(pattern), callbackIndex],
+    );
+
+    return (name) => {
+      const found = regexps.find(([regexp]) => regexp.test(name));
+      return found && typeof found[1] === 'number' ? found[1] : -1;
+    };
+  }
+
+  throw new Error('Unsupported `additionalHooks` format.');
 }
 
 /**
