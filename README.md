@@ -46,21 +46,99 @@ export default useMyImperativeHandle;
 In this case, you will configure the rule as follows:
 
 ```json
+// ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
+"additionalHooks": {
+  "(useMyCustomHook|useMyOtherCustomHook)": 0,
+  "useMyImperativeHandle": 1
+}
+```
+
+_(original idea of @squirly, see here https://github.com/facebook/react/issues/16873#issuecomment-610702001)_
+
+#### `additionalStableHooks` option
+
+This option allow you to specify additional stable hooks in addition to those provided by react (`useState`, `useRef`, etc.).
+
+```json
 {
   "plugins": ["react-hooks-configurable"],
   "rules": {
     // ...
     "react-hooks-configurable/exhaustive-deps": ["warn", {
-      "additionalHooks": {
-        "(useMyCustomHook|useMyOtherCustomHook)": 0,
-        "useMyImperativeHandle": 1
-      }
+      "additionalStableHooks": {
+        "use.+Ref": true,
+        "useMyCustomUseState": [false, true],
+        "useMyQuery": {
+          "data": false,
+          "refetch": true,
+        },
+      },
     }]
   }
 }
 ```
 
-_(original idea of @squirly, see here https://github.com/facebook/react/issues/16873#issuecomment-610702001)_
+With the original rule, only some core hooks are known to return stable elements:
+- The return value from `useRef`.
+- The setter from `useState`.
+- The dispatcher function from `useReducer`.
+- The `startTransition` function from `useTransition`.
+
+The `additionalStableHooks` option of this plugin allows you to define some of your custom hooks as stable, fully or partially.   
+(= some of the elements returned by your hook are stable but not some others, as for `useState`, `useReducer` above)
+
+Note that you can use a regex as a custom hook name if you use a naming convention for some of your stabels hooks.
+For example, if you always return a stable ref from your components named `use*Ref` (`useFunctionRef`, `useUpdatedRef`, etc.), you could define: 
+
+```json
+// ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
+"additionalStableHooks": { "use.+Ref": true }
+```
+
+##### Partially stable custom hooks
+
+If at least part of what your custom hook returns is not stable, you should avoid marking it as completely stable (e.g. `{ "useMyHook": true }`)
+Instead of doing that, you can specify which returns are stable and which are not.
+
+- __If your custom hook returns a tuple (like `useState`)__, instead of passing `true` in front of your hook name in the rule configuration, 
+  pass an array with for each element of the tuple returned by your hook `true` or `false` depending on whether it is stable or not.
+
+  _Example with a custom hook named `useMyCustomUseState` which have the same return type as `useState`:_
+
+  ```json
+  // ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
+  "additionalStableHooks": { 
+    "useMyCustomUseState": [false, true] 
+  }
+  ```
+
+- __If your custom hook returns an object of which only a few keys are stable__, instead of passing `true` in front of your hook name in the rule configuration, 
+pass an object with for each key of your hook's return object `true` or `false` depending on whether it is stable or not.
+
+  _Example:_  
+  Supposes we have a `useQuery` hook that return an object with: 
+  - a `data` key containing the data from an external source.
+  - a `refetch` key which will contain a function allowing you to refetch (= refresh) the data whenever you want.  
+    => You have made this function stable (like the `dispatch` function from `useReducer`).
+
+  ```js
+  const useQuery = (endpoint) => {
+    // ...
+
+    return { data, refetch };
+  };
+
+  export default useQuery;
+  ```
+
+  In this case, you will configure the rule as follows:
+
+  ```json
+  // ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
+  "additionalStableHooks": { 
+    "useQuery": { "data": false, "refetch": true }
+  }
+  ```
 
 ### `eslint-plugin-react-hooks-configurable/rules-of-hooks`
 

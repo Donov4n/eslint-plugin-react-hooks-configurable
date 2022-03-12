@@ -35,6 +35,25 @@ module.exports = {
               },
             ],
           },
+          additionalStableHooks: {
+            type: 'object',
+            additionalProperties: {
+              oneOf: [
+                { type: 'boolean' },
+                {
+                  type: 'array',
+                  items: {
+                    type: 'boolean'
+                  },
+                },
+                {
+                  type: 'object',
+                  additionalProperties: {
+                    type: 'boolean'
+                  },
+                },
+              ],
+            },
           },
           enableDangerousAutofixThisMayCauseInfiniteLoops: {
             type: 'boolean',
@@ -51,6 +70,12 @@ module.exports = {
       context.options[0].additionalHooks
         ? parseAdditionalHooks(context.options[0].additionalHooks)
         : undefined;
+
+    const additionalStableHooks =
+      context.options &&
+      context.options[0] &&
+      context.options[0].additionalStableHooks
+        ? parseAdditionalStableHooks(context.options[0].additionalStableHooks)
         : undefined;
 
     const enableDangerousAutofixThisMayCauseInfiniteLoops =
@@ -61,6 +86,7 @@ module.exports = {
 
     const options = {
       additionalHooks,
+      additionalStableHooks,
       enableDangerousAutofixThisMayCauseInfiniteLoops,
     };
 
@@ -276,6 +302,40 @@ module.exports = {
             }
           }
         }
+
+        if (options.additionalStableHooks) {
+          const staticParts = options.additionalStableHooks(name);
+          if (staticParts === true) {
+            // Entire return value is static.
+            return true;
+          } else if (Array.isArray(staticParts)) {
+            // Destructured tuple return where some elements are static.
+            if (
+              id.type === 'ArrayPattern' &&
+              id.elements.length <= staticParts.length &&
+              Array.isArray(resolved.identifiers)
+            ) {
+              // Find index of the resolved ident in the array pattern.
+              var idx = id.elements.findIndex((ident) => (
+                ident === resolved.identifiers[0]
+              ));
+
+              if (idx >= 0) {
+                return !!staticParts[idx];
+              }
+            }
+          } else if (typeof staticParts === 'object' && id.type === 'ObjectPattern') {
+            // Destructured object return where some properties are static.
+            var property = id.properties.find((prop) => {
+              prop.key === resolved.identifiers[0]
+            });
+
+            if (property && typeof staticParts[property.key.name] !== 'undefined') {
+              return !!staticParts[property.key.name];
+            }
+          }
+        }
+
         // By default assume it's dynamic.
         return false;
       }
@@ -1755,6 +1815,26 @@ function parseAdditionalHooks(optionValue) {
   }
 
   throw new Error('Unsupported `additionalHooks` format.');
+}
+
+function parseAdditionalStableHooks(optionValue) {
+  if (typeof optionValue === 'string') {
+    const regexp = new RegExp(optionValue);
+    return (name) => regexp.test(name);
+  }
+
+  if (typeof optionValue === 'object') {
+    const regexps = Object.entries(optionValue).map(
+      ([pattern, staticParts]) => [new RegExp(pattern), staticParts],
+    );
+
+    return (name) => {
+      const found = regexps.find(([regexp]) => regexp.test(name));
+      return found ? found[1] : false;
+    };
+  }
+
+  throw new Error('Unsupported `additionalStableHooks` format.');
 }
 
 /**
