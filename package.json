@@ -14,11 +14,15 @@
     "react"
   ],
   "license": "MIT",
+  "repository": "Donov4n/eslint-plugin-react-hooks-configurable",
   "dependencies": {
-    "eslint-plugin-react-hooks": "~4.3.0"
+    "eslint-plugin-react-hooks": "4.3.0"
   },
   "peerDependencies": {
     "eslint": "^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0"
+  },
+  "devDependencies": {
+    "eslint": "^8.24.0"
   },
   "engines": {
     "node": ">=10"
