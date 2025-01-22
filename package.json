@@ -16,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Donov4n/eslint-plugin-react-hooks-configurable.git"
+    "url": "git+https://github.com/Donov4n/eslint-plugin-react-hooks-configurable.git"
   },
   "dependencies": {
     "eslint-plugin-react-hooks": "5.1.0"
