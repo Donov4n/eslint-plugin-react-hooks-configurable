@@ -18,15 +18,19 @@ The rule works the same way as the original one, you just have more options to b
 This option allow to validate dependencies of your custom hooks.
 
 ```js
-{
-  "plugins": ["react-hooks-configurable"],
-  "rules": {
+import reactHooksConfigurable from 'react-hooks-configurable';
+
+export default [{
+  plugins: {
+    'react-hooks-configurable': reactHooksConfigurable,
+  },
+  rules: {
     // ...
-    "react-hooks-configurable/exhaustive-deps": ["warn", {
-      "additionalHooks": "(useMyCustomHook|useMyOtherCustomHook)"
-    }]
-  }
-}
+    'react-hooks-configurable/exhaustive-deps': ['warn', {
+      additionalHooks: '(useMyCustomHook|useMyOtherCustomHook)',
+    }],
+  },
+}];
 ```
 
 The original rule already allowed you to do this, but with this plugin's rule, you have in addition the 
@@ -47,9 +51,11 @@ In this case, you will configure the rule as follows:
 
 ```js
 // ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
-"additionalHooks": {
-  "(useMyCustomHook|useMyOtherCustomHook)": 0,
-  "useMyImperativeHandle": 1
+{
+  additionalHooks: {
+    '(useMyCustomHook|useMyOtherCustomHook)': 0,
+    'useMyImperativeHandle': 1,
+  }
 }
 ```
 
@@ -60,22 +66,26 @@ _(original idea of @squirly, see here https://github.com/facebook/react/issues/1
 This option allow you to specify additional stable hooks in addition to those provided by react (`useState`, `useRef`, etc.).
 
 ```js
-{
-  "plugins": ["react-hooks-configurable"],
-  "rules": {
+import reactHooksConfigurable from 'react-hooks-configurable';
+
+export default [{
+  plugins: {
+    'react-hooks-configurable': reactHooksConfigurable,
+  },
+  rules: {
     // ...
-    "react-hooks-configurable/exhaustive-deps": ["warn", {
-      "additionalStableHooks": {
-        "use.+Ref": true,
-        "useMyCustomUseState": [false, true],
-        "useMyQuery": {
-          "data": false,
-          "refetch": true,
+    'react-hooks-configurable/exhaustive-deps': ['warn', {
+      additionalStableHooks: {
+        'use.+Ref': true,
+        'useMyCustomUseState': [false, true],
+        'useMyQuery': {
+          'data': false,
+          'refetch': true,
         },
       },
-    }]
-  }
-}
+    }],
+  },
+}];
 ```
 
 With the original rule, only some core hooks are known to return stable elements:
@@ -92,7 +102,9 @@ For example, if you always return a stable ref from your components named `use__
 
 ```js
 // ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
-"additionalStableHooks": { "use.+Ref": true }
+{
+  additionalStableHooks: { "use.+Ref": true },
+}
 ```
 
 #### Partially stable custom hooks
@@ -107,8 +119,10 @@ Instead of doing that, you can specify which returns are stable and which are no
 
   ```js
   // ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
-  "additionalStableHooks": { 
-    "useMyCustomUseState": [false, true] 
+  {
+    additionalStableHooks: { 
+      'useMyCustomUseState': [false, true],
+    },
   }
   ```
 
@@ -135,8 +149,10 @@ Instead of doing that, you can specify which returns are stable and which are no
 
   ```js
   // ... In configuration of the `react-hooks-configurable/exhaustive-deps` rule:
-  "additionalStableHooks": { 
-    "useQuery": { "data": false, "refetch": true }
+  {
+    additionalStableHooks: { 
+      'useQuery': { 'data': false, 'refetch': true },
+    },
   }
   ```
 
@@ -144,4 +160,3 @@ Instead of doing that, you can specify which returns are stable and which are no
 
 No change from the way the original rule worked.  
 Please see [the React doc](https://reactjs.org/docs/hooks-rules.html) for more details about the "rules of hooks". 
-
