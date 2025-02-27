@@ -2019,7 +2019,7 @@ function isAncestorNodeOf(a, b) {
 }
 
 function isUseEffectEventIdentifier(node) {
-  if (__EXPERIMENTAL__) {
+  if (typeof __EXPERIMENTAL__ !== 'undefined' && __EXPERIMENTAL__) {
     return node.type === 'Identifier' && node.name === 'useEffectEvent';
   }
   return false;
