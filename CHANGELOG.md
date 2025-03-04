@@ -1,4 +1,4 @@
-### 5.2.0 (UNRELEASED)
+### 5.1.1 (2025-03-04)
 
 - Fix an error with a reference to an unknown `__EXPERIMENTAL__` variable.
 
