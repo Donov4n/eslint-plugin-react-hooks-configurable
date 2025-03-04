@@ -1,3 +1,8 @@
+### 5.2.0 (UNRELEASED)
+
+- Synchronize the fork with `eslint-plugin-react-hooks` 5.2.0.
+  See also the changes here: https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/CHANGELOG.md#520
+
 ### 5.1.1 (2025-03-04)
 
 - Fix an error with a reference to an unknown `__EXPERIMENTAL__` variable.

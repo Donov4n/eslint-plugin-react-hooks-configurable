@@ -19,7 +19,7 @@
     "url": "git+https://github.com/Donov4n/eslint-plugin-react-hooks-configurable.git"
   },
   "dependencies": {
-    "eslint-plugin-react-hooks": "5.1.0"
+    "eslint-plugin-react-hooks": "5.2.0"
   },
   "peerDependencies": {
     "eslint": "^3 || ^4 || ^5 || ^6 || ^7 || ^8 || ^9"
