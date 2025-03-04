@@ -1,4 +1,4 @@
-### 5.2.0 (UNRELEASED)
+### 5.2.0 (2025-03-04)
 
 - Synchronize the fork with `eslint-plugin-react-hooks` 5.2.0.
   See also the changes here: https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/CHANGELOG.md#520
