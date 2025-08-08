@@ -66,7 +66,7 @@ _(original idea of @squirly, see here https://github.com/facebook/react/issues/1
 This option allow you to specify additional stable hooks in addition to those provided by react (`useState`, `useRef`, etc.).
 
 ```js
-import reactHooksConfigurable from 'react-hooks-configurable';
+import reactHooksConfigurable from 'eslint-plugin-react-hooks-configurable';
 
 export default [{
   plugins: {
