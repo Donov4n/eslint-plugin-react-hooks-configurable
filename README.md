@@ -18,7 +18,7 @@ The rule works the same way as the original one, you just have more options to b
 This option allow to validate dependencies of your custom hooks.
 
 ```js
-import reactHooksConfigurable from 'react-hooks-configurable';
+import reactHooksConfigurable from 'eslint-plugin-react-hooks-configurable';
 
 export default [{
   plugins: {
